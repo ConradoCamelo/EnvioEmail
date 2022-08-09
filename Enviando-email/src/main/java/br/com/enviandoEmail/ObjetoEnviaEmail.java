@@ -3,6 +3,8 @@ package br.com.enviandoEmail;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 import javax.activation.DataHandler;
@@ -152,15 +154,27 @@ public class ObjetoEnviaEmail {
 		corpoEmail.setText(textoEmail);
 		}
 		
-		//Parte 02 do email que são os anexos 
-		MimeBodyPart anexoEmail = new MimeBodyPart();
-		anexoEmail.setDataHandler(new DataHandler(new ByteArrayDataSource(simuladroDePdf(), "application/pdf")));
-		anexoEmail.setFileName("anexoemail.pdf");
+		List<FileInputStream> arquivos = new ArrayList<FileInputStream>();
+		arquivos.add(simuladroDePdf());
+		arquivos.add(simuladroDePdf());
+		arquivos.add(simuladroDePdf());
+		arquivos.add(simuladroDePdf());
 		
 		Multipart multipart = new MimeMultipart();
 		multipart.addBodyPart(corpoEmail);
+		
+		int index = 0;
+		for (FileInputStream fileInputStream : arquivos) {
+			
+		//Parte 02 do email que são os anexos 
+		MimeBodyPart anexoEmail = new MimeBodyPart();
+		anexoEmail.setDataHandler(new DataHandler(new ByteArrayDataSource(fileInputStream, "application/pdf")));
+		anexoEmail.setFileName("anexoemail"+index+".pdf");
+		
 		multipart.addBodyPart(anexoEmail);
 		
+		index++; 
+		}
 		message.setContent(multipart);
 		
 		
